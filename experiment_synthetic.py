@@ -3,7 +3,7 @@ from utils import *
 import networkx as nx
 from incremental_densest import *
 from approxDP import *
-from pylab import *
+import matplotlib.pyplot as plt
 from charikar import *
 import generate
 import time
@@ -108,4 +108,11 @@ if __name__ == "__main__":
             res[j, i,7] = get_true_density(generated_C)
             res[j, i,8] = el_time
     plot_PRF(noise_range, innerdegree_range, res)
+    print("densities=" , densities)
+    for n in range(len(graphs)):
+        # Plot the graph using matplotlib
+        nx.draw(graphs[n], with_labels=True, font_weight='bold')
+
+        # Show the plot
+        plt.show()
     
