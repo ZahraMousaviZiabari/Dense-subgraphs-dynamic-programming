@@ -3,7 +3,6 @@ import networkx as nx
 from networkx.utils import powerlaw_sequence
 import time
 import sys
-import pickle
 import os.path
 
 from datetime import datetime, timedelta
@@ -29,7 +28,7 @@ def readdata(filename, unix = True):
             line = line.strip().split(' ')
             if not unix:
                 tstr =  line[0][1:] + ' ' + line[1][0:-1]
-                t = datetime.strptime(tstr, '%Y-%m-%d %H:%M:%S')
+                #t = datetime.strptime(tstr, '%Y-%m-%d %H:%M:%S')
                 timestamp = time.mktime(datetime.strptime(tstr, '%Y-%m-%d %H:%M:%S').timetuple())
                 
                 tst, n1, n2 = int(timestamp), line[2], line[3]
@@ -48,12 +47,14 @@ def readdata(filename, unix = True):
     
 def readdata_dict(filename, unix = True):
     timestamps = {}
-    with open(filename, 'r') as f:    
+    unique_original_timestamps = []
+    
+    with open(filename, 'r', encoding='utf-8') as f:    
         for line in f:                
             line = line.strip().split(' ')
             if not unix:
                 tstr =  line[0][1:] + ' ' +line[1][0:-1]
-                t = datetime.strptime(tstr, '%Y-%m-%d %H:%M:%S')
+                #t = datetime.strptime(tstr, '%Y-%m-%d %H:%M:%S')
                 timestamp = time.mktime(datetime.strptime(tstr, '%Y-%m-%d %H:%M:%S').timetuple())
                 
                 tst, n1, n2 = int(timestamp), line[2], line[3]
@@ -69,7 +70,12 @@ def readdata_dict(filename, unix = True):
             if tst not in timestamps:
                 timestamps[tst] = []
             timestamps[tst].append((n1, n2))
-    return timestamps
+            
+            "added recently"
+            if tstr not in unique_original_timestamps:
+                unique_original_timestamps.append(tstr)
+            
+    return timestamps, unique_original_timestamps
     
 def readdata_dict_limit(filename, limit = 1000, unix = True):
     timestamps = {}
@@ -79,7 +85,7 @@ def readdata_dict_limit(filename, limit = 1000, unix = True):
             line = line.strip().split(' ')
             if not unix:
                 tstr =  line[0][1:] + ' ' +line[1][0:-1]
-                t = datetime.strptime(tstr, '%Y-%m-%d %H:%M:%S')
+                #t = datetime.strptime(tstr, '%Y-%m-%d %H:%M:%S')
                 timestamp = time.mktime(datetime.strptime(tstr, '%Y-%m-%d %H:%M:%S').timetuple())
                 
                 tst, n1, n2 = int(timestamp), line[2], line[3]
