@@ -2,10 +2,7 @@ import numpy as np
 import networkx as nx
 from networkx.utils import powerlaw_sequence
 import time
-import sys
-import os.path
-
-from datetime import datetime, timedelta
+from datetime import datetime
 
     
 def generateGraph(n = 100, seed = 1.0):
@@ -21,21 +18,21 @@ def generateGraph(n = 100, seed = 1.0):
     G.remove_edges_from(G.selfloop_edges())
     return G
     
-def readdata(filename, unix = True):
+def readdata(filename):
     timestamps = []
     with open(filename, 'r') as f:    
         for line in f:                
             line = line.strip().split(' ')
-            if not unix:
-                tstr =  line[0][1:] + ' ' + line[1][0:-1]
+
+                #tstr =  line[0][1:] + ' ' + line[1][0:-1]
+            tstr =  line[0][1:] + ' ' + line[1]
                 #t = datetime.strptime(tstr, '%Y-%m-%d %H:%M:%S')
-                timestamp = time.mktime(datetime.strptime(tstr, '%Y-%m-%d %H:%M:%S').timetuple())
+                #timestamp = time.mktime(datetime.strptime(tstr, '%Y-%m-%d %H:%M:%S').timetuple())
+            timestamp = time.mktime(datetime.strptime(tstr, '%Y-%m-%d %H-%M-%S').timetuple())
                 
-                tst, n1, n2 = int(timestamp), line[2], line[3]
-            else:
-                timestamp = int(line[0])
-                tst, n1, n2 = int(line[0]), int(line[1]), int(line[2])
-            
+                #tst, n1, n2 = int(timestamp), line[2], line[3]
+            tst, n1, n2 = int(timestamp), line[3], line[4]
+
             if n1 == n2:
                 continue
             
@@ -45,23 +42,23 @@ def readdata(filename, unix = True):
         timestamps.sort()
     return timestamps
     
-def readdata_dict(filename, unix = True):
+def readdata_dict(filename):
     timestamps = {}
     unique_original_timestamps = []
     
     with open(filename, 'r', encoding='utf-8') as f:    
         for line in f:                
             line = line.strip().split(' ')
-            if not unix:
-                tstr =  line[0][1:] + ' ' +line[1][0:-1]
+
+                #tstr =  line[0][1:] + ' ' + line[1][0:-1]
+            tstr =  line[0][1:] + ' ' + line[1]
                 #t = datetime.strptime(tstr, '%Y-%m-%d %H:%M:%S')
-                timestamp = time.mktime(datetime.strptime(tstr, '%Y-%m-%d %H:%M:%S').timetuple())
+                #timestamp = time.mktime(datetime.strptime(tstr, '%Y-%m-%d %H:%M:%S').timetuple())
+            timestamp = time.mktime(datetime.strptime(tstr, '%Y-%m-%d %H-%M-%S').timetuple())
                 
-                tst, n1, n2 = int(timestamp), line[2], line[3]
-            else:
-                timestamp = int(line[0])
-                tst, n1, n2 = int(line[0]), int(line[1]), int(line[2])
-            
+                #tst, n1, n2 = int(timestamp), line[2], line[3]
+            tst, n1, n2 = int(timestamp), line[3], line[4]
+  
             if n1 == n2:
                 continue
             
@@ -71,28 +68,25 @@ def readdata_dict(filename, unix = True):
                 timestamps[tst] = []
             timestamps[tst].append((n1, n2))
             
-            "added recently"
+
             if tstr not in unique_original_timestamps:
                 unique_original_timestamps.append(tstr)
             
     return timestamps, unique_original_timestamps
     
-def readdata_dict_limit(filename, limit = 1000, unix = True):
+def readdata_dict_limit(filename, limit = 10000):
     timestamps = {}
+    unique_original_timestamps = []
+    
     with open(filename, 'r') as f:
         c = 0
         for line in f:                
             line = line.strip().split(' ')
-            if not unix:
-                tstr =  line[0][1:] + ' ' +line[1][0:-1]
-                #t = datetime.strptime(tstr, '%Y-%m-%d %H:%M:%S')
-                timestamp = time.mktime(datetime.strptime(tstr, '%Y-%m-%d %H:%M:%S').timetuple())
+            tstr =  line[0][1:] + ' ' + line[1]
+            timestamp = time.mktime(datetime.strptime(tstr, '%Y-%m-%d %H-%M-%S').timetuple())
                 
-                tst, n1, n2 = int(timestamp), line[2], line[3]
-            else:
-                timestamp = int(line[0])
-                tst, n1, n2 = int(line[0]), int(line[1]), int(line[2])
-            
+            tst, n1, n2 = int(timestamp), line[3], line[4]
+
             if n1 == n2:
                 continue
             
@@ -102,9 +96,44 @@ def readdata_dict_limit(filename, limit = 1000, unix = True):
                 timestamps[tst] = []
             timestamps[tst].append((n1, n2))
             c += 1
+            
+            if tstr not in unique_original_timestamps:
+                unique_original_timestamps.append(tstr)
+     
             if c >= limit:
-                return timestamps
-    return timestamps
+                return timestamps, unique_original_timestamps
+    return timestamps, unique_original_timestamps
+
+def readdata_dict_limit_weight(filename, limit = 10000):
+    timestamps = {}
+    unique_original_timestamps = []
+    
+    with open(filename, 'r') as f:
+        c = 0
+        for line in f:                
+            line = line.strip().split(' ')
+            tstr =  line[0][1:] + ' ' + line[1]
+            timestamp = time.mktime(datetime.strptime(tstr, '%Y-%m-%d %H-%M-%S').timetuple())
+                
+            tst, n1, n2, w = int(timestamp), line[3], line[4], float(line[5])
+
+            if n1 == n2:
+                continue
+            
+            if n2 < n1:
+                n1, n2 = n2, n1
+            if tst not in timestamps:
+                timestamps[tst] = []
+            timestamps[tst].append((n1, n2, w))
+            c += 1
+            
+            if tstr not in unique_original_timestamps:
+                unique_original_timestamps.append(tstr)
+     
+            if c >= limit:
+                return timestamps, unique_original_timestamps
+    return timestamps, unique_original_timestamps
+
 
     
 def readgraph(filename, unix = True):
@@ -134,7 +163,7 @@ def generateTS(G, length = 10000):
     
 def generateTS_dict(G, length = 10000):
     timestamps = {}
-    edges = G.edges()
+    edges = list(G.edges())
     idx = np.random.choice(G.number_of_edges(), length)
     for tst in range(length):
         n1, n2 = edges[idx[tst]]

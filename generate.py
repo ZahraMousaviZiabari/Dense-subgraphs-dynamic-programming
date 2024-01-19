@@ -1,8 +1,5 @@
-from networkx import *
-from networkx.generators.random_graphs import *
+import networkx as nx
 import numpy as np
-from datetime import datetime, timedelta
-import os
 import random
 from copy import deepcopy
     
@@ -31,20 +28,20 @@ def plantBackground_uniform(span, G):
     
         
 def generateRG(n, edges_p, nodes):
-    G = fast_gnp_random_graph(n, edges_p, seed=None, directed=False)
+    G = nx.fast_gnp_random_graph(n, edges_p, seed=None, directed=False)
     gnodes = list(G.nodes())
     relabel = {gnodes[i]: nodes[i] for i in range(n)}    
-    G = relabel_nodes(G, relabel) 
+    G = nx.relabel_nodes(G, relabel) 
     return G
     
 def generate(generator_pars):
     
     k = generator_pars['k']
-    B = generator_pars['B']
-    noise = generator_pars['noise']
-    innerdegree = generator_pars['innerdegree']
-    nodesInCom = generator_pars['nodesInCom']
-    backgoundN = generator_pars['backgoundN']
+    #B = generator_pars['B']  #length of each interval
+    noise = generator_pars['noise']  #background average degree
+    innerdegree = generator_pars['innerdegree']  #plant average degree
+    nodesInCom = generator_pars['nodesInCom'] #plant number of nodes
+    backgoundN = generator_pars['backgoundN'] #background nodes
     wholeSpan = generator_pars['wholeSpan']
     
     com_number = k
@@ -56,8 +53,8 @@ def generate(generator_pars):
     desired_avg_degree = noise   
         
     start = 0
+    end= 1
     span = wholeSpan
-    end = start + span
 
     TS = []
     edges_p = float(desired_avg_degree)/(n-1)
@@ -68,7 +65,10 @@ def generate(generator_pars):
     allocated_interval_length = wholeSpan/k
     generated_C = []
     for i in range(com_number):
-        interval = (allocated_interval_length*(i), allocated_interval_length*(i)+B-1)
+        start = allocated_interval_length * i
+        end = (allocated_interval_length * (i+1)) -1
+        #interval = (allocated_interval_length*(i), allocated_interval_length*(i)+B-1)
+        interval = (start, end)
         edges_pCom = float(desired_avgCom)/(nCom - 1)
         C = generateRG(nCom, edges_pCom, range(i*nCom,(i+1)*nCom))
         

@@ -6,14 +6,14 @@ import os.path
 import utils
 import time
 import matplotlib.pyplot as plt
+import sys
 
 class ApproxDP:
     def __init__(self, eps, k, timestamps):
         self.k = k
         self.eps = eps
         self.timestamps = timestamps
-        #self.sorted_TS = sorted(timestamps.keys())
-        self.sorted_TS = list(timestamps.keys())
+        self.sorted_TS = sorted(timestamps.keys())
         self.m = len(self.sorted_TS)
         self.DP = np.empty((self.k, self.m))
         self.C = np.empty((self.k, self.m))
@@ -21,7 +21,7 @@ class ApproxDP:
     
     def run_DP(self):
         ds = chid.IncDensest()
-        print("Segment = 0")
+        print("Segment =  0")
         for i in range(0, self.m):
             for (n1,n2) in self.timestamps[self.sorted_TS[i]]:
                 best_density =  ds.add_edge(n1, n2)
@@ -102,15 +102,25 @@ class ApproxDP:
         
 if __name__ == "__main__":
 
-    dataset = 'students1000'
-    k = 5
+    assert len(sys.argv) == 4, "Usage: python3 approxDP_charikarDS.py 5 10000 graph_sample_10k" 
+    #python3 approxDP_charikarDS.py 5 10000000 main_graph
+    
+    # INPUT READING
+    k = sys.argv[1]  # 5, 100, 10
+    assert k.isdigit(), "k must be an integer"
+    k = int(k)
+    limit = sys.argv[2] # limit in lines of code
+    assert limit.isdigit(), "limit must be an integer"
+    limit = int(limit)
+    dataset = sys.argv[3] # main_graph / graph_sample_10k
+
     dp_eps = 0.1
     
     alg_pars = {}
     alg_pars['dp_eps'] = dp_eps
     
     filename = os.path.join('data', dataset+'.txt')
-    TS, unique_original_timestamps = utils.readdata_dict(filename, unix = False)
+    TS, unique_original_timestamps = utils.readdata_dict_limit(filename, limit)
  
     t1 = time.time()
     ADP = ApproxDP(alg_pars['dp_eps'], k, TS)
@@ -122,8 +132,7 @@ if __name__ == "__main__":
     
     graphs, densities, intervals = ADP.get_sol_graphs()
     print ('Densities:', densities)
-    #print ('total density:', sum(densities))
-    #print ('intervals:', intervals)
+
     print("Time intervals:")
     for interval in intervals:
             a,b = interval
@@ -131,11 +140,16 @@ if __name__ == "__main__":
     max_index = densities.index(max(densities))
     s,e = intervals[max_index]
     print("Maximum Density =", max(densities),", in the interval =",unique_original_timestamps[s],"-",unique_original_timestamps[e])
+
+        
     for n in range(len(graphs)):
         # Plot the graph using matplotlib
         nx.draw(graphs[n], with_labels=True, font_weight='bold')
-
+        # Show the plot for the current graph without waiting
+        plt.figure()
+        plt.show(block=False)
+        plt.pause(0.1)
         # Show the plot
-        plt.show()
+    plt.show()
 
     

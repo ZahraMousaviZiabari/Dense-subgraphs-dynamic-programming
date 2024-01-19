@@ -1,4 +1,4 @@
-from networkx import *
+import networkx as nx
 import fibonacci_heap_mod
 import copy
 
