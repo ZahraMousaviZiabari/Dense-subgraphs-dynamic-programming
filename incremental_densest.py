@@ -3,7 +3,6 @@ import math
 import fibonacci_heap_mod as fb
 import copy
 import networkx as nx
-import pickle
 import utils
 
 class IncDensest:
@@ -159,52 +158,6 @@ class IncDensest:
                         self.delta[node][self.node2set[neigh]] = 0.
                     self.delta[node][self.node2set[neigh]] += 1.
         return
-    
-def get_best_graph(G, set2nodes, best_iter):
-    S = copy.deepcopy(G)       
-    for i in range(best_iter):
-        S.remove_nodes_from(set2nodes[i])
-    return S 
-
-def check_invariant(G, node2set, eps, beta):
-    S = nx.Graph()
-    correct = True
-    maxiter = np.ceil(math.log(float(G.number_of_nodes()), eps+1))
-    max_set = int(max(node2set.values())) if node2set else 0
-    if not max_set <= maxiter-1:
-        print (max_set, maxiter)
-        print ('incorrect range of iterations')
-        exit()
-    for i in range(0, max_set+1):
-        nodes = [k for k,v in node2set.iteritems() if v >= i]
-        S = G.subgraph(nodes)
-        tmp = set([n for n, d in S.degree() if d < 2.*beta*(1.+eps)])
-        if tmp != set([k for k,v in node2set.iteritems() if v == i]):
-            print ('wrong iteration:', i)
-            print ('should be:', tmp)
-            print ('mine:',  nodes, node2set)
-            correct = False
-            
-    return correct
-    
-def check_delta(G, delta):
-    correct = True
-    true_delta = nx.get_degrees(G)
-    for u in true_delta:
-        for i in true_delta[u]:
-            if (i not in delta[u] and true_delta[u][i]!=0) or true_delta[u][i] != delta[u][i]:
-                print (u, i, delta, true_delta)
-                correct = False
-                print ('delta is incorrect')
-                exit()
-    for u in delta:
-        for i in delta[u]:
-            if (i in true_delta[u] or delta[u][i]!=0) and true_delta[u][i] != delta[u][i]:
-                print (u, i)
-                correct = False
-                print ('delta is incorrect')
-                exit()
-    return correct
 
 
 if __name__ == "__main__":
