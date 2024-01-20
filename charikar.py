@@ -2,6 +2,51 @@ import networkx as nx
 import fibonacci_heap_mod
 import copy
 
+
+def charikarHeap_weighted(G):
+    import copy
+    import fibonacci_heap_mod
+
+    E = G.number_of_edges()
+    N = G.number_of_nodes()
+    fib_heap = fibonacci_heap_mod.Fibonacci_heap()
+    entries = {}
+    order = []
+    S = copy.deepcopy(G)
+    
+    for node in G.nodes():
+        sum_weights = -sum([G[node][neighbor]['weight'] for neighbor in G.neighbors(node)])
+        entries[node] = fib_heap.enqueue(node, sum_weights)
+        
+    best_avg = 0.0    
+    iter = 0
+    
+    while fib_heap:
+        avg_weight = (2.0 * E) / N
+        if best_avg <= avg_weight:
+            best_avg = avg_weight
+            best_iter = iter
+            
+        min_weight_obj = fib_heap.dequeue_min()
+        min_weight_node = min_weight_obj.get_value()
+        order.append(min_weight_node)
+        
+        for n in S.neighbors(min_weight_node):            
+            fib_heap.decrease_key(entries[n], 1)
+        
+        S.remove_node(min_weight_node)
+        E -= sum([G[min_weight_node][neighbor]['weight'] for neighbor in G.neighbors(min_weight_node)])
+        N -= 1
+        iter += 1
+        
+    S = copy.deepcopy(G)       
+    for i in range(best_iter):
+        S.remove_node(order[i])
+    return S, best_avg
+
+
+
+
 def charikarHeap(G):
          
     E = G.number_of_edges()
