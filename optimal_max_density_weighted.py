@@ -51,21 +51,23 @@ def find_densest(G, g=None):
         H.add_edge(v, 't', cap=weight_t)
 
     eps = 1e-8
-
+    
     while ub - lb > eps:
         cut_value, (S, T) = nx.minimum_cut(H, 's', 't', capacity='cap')
-        if len(S) - 1 > 0:
-            lb = g
+        if cut_value > 0:
+            ub = g  # Update the upper bound for a higher density
         else:
-            ub = g
+            lb = g  # Update the lower bound for a lower density
         g = (lb + ub) / 2.
         for v in nodes:
             # Compute node weight based on the sum of weights of incident edges
             incident_edge_weights = [G[u][v]['weight'] for u in G.neighbors(v)]
             weight_v = sum(incident_edge_weights) 
-            
+        
             H[v]['t']['cap'] =  m + 2. * g - weight_v * degrees[v]
-    return lb
+        
+    return ub  # Return the upper bound instead of the lower bound
+
 
 if __name__ == "__main__":
     G = nx.erdos_renyi_graph(100, 0.7)

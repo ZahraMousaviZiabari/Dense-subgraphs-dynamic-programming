@@ -29,9 +29,9 @@ def plantBackground_uniform(span, G):
         
 def generateRG(n, edges_p, nodes):
     G = nx.fast_gnp_random_graph(n, edges_p, seed=None, directed=False)
-    epsilon = 1e-10  
+    #epsilon = 1e-10  
     for edge in G.edges(data=True):
-        edge[2]['weight'] = random.uniform(epsilon, 45)  # Assign random weights
+        edge[2]['weight'] = random.uniform(1, 45)  # Assign random weights
     gnodes = list(G.nodes())
     relabel = {gnodes[i]: nodes[i] for i in range(n)}
     G = nx.relabel_nodes(G, relabel)

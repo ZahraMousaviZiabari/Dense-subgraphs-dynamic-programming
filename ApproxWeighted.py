@@ -166,11 +166,11 @@ if __name__ == "__main__":
 
     generator_pars = {}
     generator_pars['k'] = k #10 #2 #5
-    generator_pars['noise'] = 100  #0.5 # by lowering this the densities will be more accurate but by increasing to 100 it will be bad
+    generator_pars['noise'] = 1  #0.5 # by lowering this the densities will be more accurate but by increasing to 100 it will be bad
     generator_pars['innerdegree'] = round(d)
     generator_pars['nodesInCom'] = round(n) 
-    generator_pars['backgoundN'] = round(n)*10 #1000 #100
-    generator_pars['wholeSpan'] = 1000 #10000 #1000
+    generator_pars['backgoundN'] = round(n)*5 #1000 #100
+    generator_pars['wholeSpan'] = 10000 #10000 #1000
         
     alg_pars = {}
     alg_pars['dp_eps'] = 0.1
