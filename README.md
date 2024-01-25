@@ -1,5 +1,7 @@
 **Implementation 1:**
+
 Files: 
+
 •	approxDP: This is the main function, and the program is run by executing the command:
 
 **python3 approxDP.py 5 10000 graph_sample_10k**
@@ -45,6 +47,8 @@ This program is run by typing the command:
 **python3 approxWeighted.py 5 10000 graph_sample_10k**
 
 The overall methodology is the same as the previous implementation except the following:
+
 •	find_densest function: This function computes the densest subgraph in a given graph by solving a minimum cut problem. It sets up a directed graph H where each edge has a capacity. The minimum cut is found using the nx.minimum_cut function from NetworkX, and the density of the resulting cut is used to update the lower and upper bounds for the densest subgraph. The algorithm iteratively refines the bounds until they converge within a small epsilon.
+
 •	IncDensest Class: This class now has a G attribute representing the evolving graph. The best_density attribute is updated by calling the find_densest function each time a new edge is added through the add_edge method. The add_edge method checks if the nodes and edge are already present in the graph and adds them if not. Then, it updates the best_density by recomputing the densest subgraph using the find_densest function.
 
