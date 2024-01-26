@@ -176,8 +176,8 @@ if __name__ == "__main__":
     generator_pars['k'] = k #10 #2 #5
     generator_pars['noise'] = 100  #0.5 # by lowering this the densities will be more accurate but by increasing to 100 it will be bad
     generator_pars['innerdegree'] = round(d)
-    generator_pars['nodesInCom'] = round(n) 
-    generator_pars['backgoundN'] = round(n)*10 #1000 #100
+    generator_pars['nodesInCom'] = round(n)
+    generator_pars['backgoundN'] = round(n) #1000 #100
     generator_pars['wholeSpan'] = 10000 #10000 #1000
         
     alg_pars = {}
