@@ -47,19 +47,17 @@ def perform_hypothesis_test_ind(real_data, synthetic_data):
 def calculate_z_scores(real_data, synthetic_data):
     
     # Calculate mean and standard deviation
-    mean_real = np.mean(real_data) 
-    std_dev_real = np.std(real_data)
+    mean = np.mean(synthetic_data) 
+    std = np.std(synthetic_data)
     
     # Calculate z-scores
-    z_scores_real = (real_data - mean_real) / std_dev_real
-    z_scores_synthetic = (synthetic_data - mean_real) / std_dev_real
+    z_scores_real = (real_data - mean) / std
     
     avg_z_scores_real = np.mean(z_scores_real)
-    avg_z_scores_synthetic = np.mean(z_scores_synthetic)
+    avg_abs_z_scores_real = np.mean(np.abs(z_scores_real))
     
     print("Z-scores for real data:", z_scores_real) 
     print("Average Z-scores for real data:", avg_z_scores_real) 
-    print("Z-scores for synthetic data:", z_scores_synthetic) 
-    print("Average Z-scores for synthetic data:", avg_z_scores_synthetic) 
+    print("Average absolute Z-scores for real data:", avg_abs_z_scores_real) 
     return
 
